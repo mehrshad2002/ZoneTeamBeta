@@ -1,4 +1,6 @@
 from django.shortcuts import render
+
+from hub.models import Hubmodel
 from .forms import HubForms
 
 def HubIndex(request):
@@ -7,8 +9,13 @@ def HubIndex(request):
 
 
 def CreateIndex(request):
-    form = HubForms()
+    my_form = HubForms()
+    if request.method == "POST":
+        my_form = HubForms(request.POST)
+        if my_form.is_valid():
+            Hubmodel.objects.create(**my_form.cleaned_data)
+            my_form = HubForms()
     context = {
-        "form" : form
+        "form" : my_form
     }
     return render(request, 'hub/create.html',context)
